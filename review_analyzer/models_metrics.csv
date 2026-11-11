@@ -1,0 +1,4 @@
+﻿Модель,Accuracy,Precision,Recall,F1,F1 (кросс-валидация)
+LogisticRegression,0.99,0.985,1.0,0.992,0.987
+RandomForest,0.959,0.955,0.984,0.969,0.977
+XGBoost,0.948,0.928,1.0,0.962,0.968

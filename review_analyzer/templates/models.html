@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Сравнение моделей классификации тональности</h2>
+  {% if rows %}
+  <table>
+    <tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr>
+    {% for r in rows %}<tr class="{{ 'best' if loop.first }}">{% for c in cols %}<td>{{ r[c] }}</td>{% endfor %}</tr>{% endfor %}
+  </table>
+  <p>Лучшая модель: <b>{{ best['Модель'] }}</b>. Векторизация — TF-IDF (слова и пары слов), тестовая выборка — 25% отзывов,
+    дополнительно F1 посчитан на 5-кратной кросс-валидации.</p>
+  {% else %}<p>Запустите <code>python compare_models.py</code>, чтобы получить таблицу.</p>{% endif %}
+  <img class="chart" src="/static/models.png" style="max-width:760px">
+</div>
+<div class="card" style="margin-top:20px">
+  <h2>Качество рекомендательной системы</h2>
+  <p>Из данных было спрятано 20% оценок, после чего система предсказала их по оценкам похожих пользователей.</p>
+  <table style="max-width:600px">
+    <tr><th>Метод</th><th>Средняя ошибка (MAE)</th></tr>
+    <tr class="best"><td>User-based collaborative filtering</td><td>{{ mae }}</td></tr>
+    <tr><td>Средняя оценка товара (без учёта пользователя)</td><td>{{ baseline }}</td></tr>
+  </table>
+  <p class="muted">Проверено оценок: {{ n }}. Чем меньше ошибка, тем точнее прогноз.</p>
+</div>
+{% endblock %}

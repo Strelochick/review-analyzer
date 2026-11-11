@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Статистика по товарам</h2>
+  <table>
+    <tr><th>Товар</th><th>Средний рейтинг</th><th>Отзывов</th><th>Доля позитива</th><th>Доля негатива</th></tr>
+    {% for s in stats %}
+    <tr><td><b>{{ s['product'] }}</b></td><td>{{ s['avg_rating'] }} ★</td><td>{{ s['reviews'] }}</td>
+        <td><span class="bar"><span style="width: {{ s['positive'] }}%"></span></span> {{ s['positive'] }}%</td>
+        <td>{{ s['negative'] }}%</td></tr>
+    {% endfor %}
+  </table>
+</div>
+<div class="grid g2e" style="margin-top:20px">
+  <div class="card"><h2>Топ товаров по доле позитива</h2>
+    <table><tr><th>Товар</th><th>Позитивных</th><th>Доля</th></tr>
+    {% for t in top_pos %}<tr><td>{{ t['product'] }}</td><td>{{ t['Позитивных'] }} из {{ t['Отзывов'] }}</td><td>{{ t['Доля позитива, %'] }}%</td></tr>{% endfor %}
+    </table>
+    <p class="muted">Нейтральные отзывы (3 ★) не учитываются.</p>
+  </div>
+  <div class="card"><h2>Частые слова в негативных отзывах</h2>
+    <table><tr><th>Слово</th><th>Количество</th></tr>
+    {% for w, c in top_words %}<tr><td>{{ w }}</td><td>{{ c }}</td></tr>{% endfor %}</table>
+  </div>
+</div>
+{% endblock %}

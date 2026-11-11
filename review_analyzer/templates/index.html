@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid g3" style="margin-bottom:20px">
+  <div class="card"><div class="kpi">{{ total }}</div><div class="kpi-label">отзывов в базе</div></div>
+  <div class="card"><div class="kpi">{{ avg }} ★</div><div class="kpi-label">средний рейтинг</div></div>
+  <div class="card"><div class="kpi">{{ positive }}%</div><div class="kpi-label">позитивных отзывов (4-5 ★)</div></div>
+</div>
+<div class="grid g2">
+  <div class="card">
+    <h2>Оставить отзыв</h2>
+    <form method="post">
+      <div class="row">
+        <select name="product">
+          <option value="">— выберите товар —</option>
+          {% for p in products %}<option {{ 'selected' if p == form.product }}>{{ p }}</option>{% endfor %}
+        </select>
+        <select name="rating" style="width:140px">
+          {% for i in range(5, 0, -1) %}<option value="{{ i }}" {{ 'selected' if form.rating|string == i|string }}>{{ '★' * i }}</option>{% endfor %}
+        </select>
+      </div>
+      <textarea name="text" rows="4" placeholder="Напишите ваш отзыв...">{{ form.text }}</textarea>
+      <div class="row">
+        <button name="action" value="check" class="secondary">Определить тональность</button>
+        <button name="action" value="save">Сохранить отзыв</button>
+      </div>
+    </form>
+    {% if result %}
+    <div class="result {{ 'pos' if result.label == 'позитивный' else 'neg' }}">
+      Предсказанная тональность: <b>{{ result.label }}</b> (уверенность {{ result.conf }}%)
+      {% if result.saved %}<br>✔ Отзыв сохранён в базу SQLite{% endif %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h2>Рекомендуем вам</h2>
+    {% for p, s, why in recs %}
+    <div class="rec"><div><b>{{ p }}</b><div class="muted">{{ why }}</div></div><div><span class="score">{{ s }} ★</span></div></div>
+    {% endfor %}
+    <p class="muted">Прогноз оценки по отзывам похожих пользователей (user-based collaborative filtering).</p>
+    {% if history %}
+    <h2 style="margin-top:18px">Ваши оценки</h2>
+    <table>{% for h in history[:6] %}<tr><td>{{ h.product }}</td><td>{{ '★' * h.rating }}</td></tr>{% endfor %}</table>
+    {% endif %}
+    <p class="users muted">Демо — войти как пользователь из датасета:<br>
+      {% for u in demo_users %}<a href="/login/{{ u }}">{{ u }}</a>{% endfor %}</p>
+  </div>
+</div>
+<div class="grid g2e" style="margin-top:20px">
+  <div class="card"><h2>Распределение оценок</h2><img class="chart" src="/static/ratings.png?v={{ stamp }}"></div>
+  <div class="card"><h2>Облако слов</h2><img class="chart" src="/static/wordcloud.png?v={{ stamp }}"></div>
+</div>
+<div class="card" style="margin-top:20px"><h2>Динамика отзывов по дням</h2><img class="chart" src="/static/daily.png?v={{ stamp }}"></div>
+{% endblock %}
